@@ -5,6 +5,7 @@
 #include <Box2D/Box2D.h>
 #include "CBox2D.h"
 #include <stdio.h>
+#include <string>
 #include <map>
 
 // Some Box2D engine paremeters
@@ -50,19 +51,24 @@ public:
     b2BodyDef *groundBodyDef;
     b2Body *groundBody;
     b2PolygonShape *groundBox;
-    b2Body *theBrick, *theBall;
+    b2Body *Paddle1, *Paddle2, *theBall;
     CContactListener *contactListener;
     float totalElapsedTime;
     
-    b2Body *theBrick1;
+    float Paddle1_POS_X, Paddle1_POS_Y;
+    float Paddle2_POS_X, Paddle2_POS_Y;
 
     // You will also need some extra variables here for the logic
     bool ballHitBrick;
     bool ballLaunched;
+    
+    int Player1Score, Player2Score;
 }
 @end
 
 @implementation CBox2D
+
+@synthesize Paddle2_POS_X;
 
 - (instancetype)init //This is replacement for Hello World
 {
@@ -82,23 +88,32 @@ public:
         world->SetContactListener(contactListener);
         
         // Set up the brick and ball objects for Box2D
-        b2BodyDef brickBodyDef; //Brick Definition
-        brickBodyDef.type = b2_dynamicBody;
-        brickBodyDef.position.Set(BRICK_POS_X, BRICK_POS_Y);
-        theBrick = world->CreateBody(&brickBodyDef);
+        b2BodyDef Paddle1BodyDef; //Brick Definition
+        Paddle1BodyDef.type = b2_dynamicBody;
+        Paddle1_POS_X = 400.0f;
+        Paddle1_POS_Y = 500.0f;
+        Paddle1BodyDef.position.Set(Paddle1_POS_X, Paddle1_POS_Y);
+        Paddle1 = world->CreateBody(&Paddle1BodyDef);
+        
+        //Set up initial scores
+        Player1Score = 0;
+        Player2Score = 0;
+        
         
         // Set up the brick and ball objects for Box2D
-        b2BodyDef brickBodyDef1; //Brick Definition
-        brickBodyDef1.type = b2_dynamicBody;
-        brickBodyDef1.position.Set(BRICK1_POS_X, BRICK1_POS_Y);
-        theBrick1 = world->CreateBody(&brickBodyDef1);
+        b2BodyDef Paddle2BodyDef; //Brick Definition
+        Paddle2BodyDef.type = b2_dynamicBody;
+        Paddle2_POS_X = 400.0f;
+        Paddle2_POS_Y = 100.0f;
+        Paddle2BodyDef.position.Set(Paddle2_POS_X, Paddle2_POS_Y);
+        Paddle2 = world->CreateBody(&Paddle2BodyDef);
         
-        if(theBrick){
-            theBrick->SetUserData((__bridge void *)self);
-            theBrick->SetAwake(false);
+        if(Paddle1){
+            Paddle1->SetUserData((__bridge void *)self);
+            Paddle1->SetAwake(false);
             
-            theBrick1->SetUserData((__bridge void *)self);
-            theBrick1->SetAwake(false);
+            Paddle2->SetUserData((__bridge void *)self);
+            Paddle2->SetAwake(false);
             
             //Shape
             b2PolygonShape dynamicBox;
@@ -110,14 +125,14 @@ public:
             fixtureDef.density = 100.0f;
             fixtureDef.friction = 0.0f;
             fixtureDef.restitution = 1.0f;
-            theBrick->CreateFixture(&fixtureDef);
+            Paddle1->CreateFixture(&fixtureDef);
             
             b2FixtureDef fixtureDef1;
             fixtureDef1.shape = &dynamicBox;
             fixtureDef1.density = 100.0f;
             fixtureDef1.friction = 0.0f;
             fixtureDef1.restitution = 1.0f;
-            theBrick1->CreateFixture(&fixtureDef1);
+            Paddle2->CreateFixture(&fixtureDef1);
             
             b2BodyDef ballBodyDef; //ball Defintion
             ballBodyDef.type = b2_dynamicBody;
@@ -177,9 +192,9 @@ public:
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
-    if((totalElapsedTime > BRICK_WAIT) && theBrick && theBrick1){
-        theBrick->SetAwake(true);
-        theBrick1->SetAwake(true);
+    if((totalElapsedTime > BRICK_WAIT) && Paddle1 && Paddle2){
+        Paddle1->SetAwake(true);
+        Paddle2->SetAwake(true);
         
         //theBall->ApplyForce(b2Vec2(10, -10), theBall->GetPosition(), true);
     }
@@ -202,6 +217,24 @@ public:
         {
             world->Step(MAX_TIMESTEP, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
             elapsedTime -= MAX_TIMESTEP;
+            
+            Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
+            
+            if(theBall->GetPosition().y < 0){
+                Player1Score++;
+                theBall->SetTransform(b2Vec2(400, 300), 0);
+                theBall->SetLinearVelocity(b2Vec2(0, 0));
+                std::string Player1Score_Str = std::to_string(Player1Score);
+                std::string Player2Score_Str = std::to_string(Player2Score);
+                printf("\n\nScore\n Player 1: %d\n Player 2: %d",Player1Score, Player2Score);
+            } else if (theBall->GetPosition().y > 600) {
+                Player2Score++;
+                theBall->SetTransform(b2Vec2(400, 300), 0);
+                theBall->SetLinearVelocity(b2Vec2(0, 0));
+                std::string Player1Score_Str = std::to_string(Player1Score);
+                std::string Player2Score_Str = std::to_string(Player2Score);
+                printf("\n\nScore\n Player 1: %d\n Player 2: %d",Player1Score, Player2Score);
+            }
         }
         
         if (elapsedTime > 0.0f)
@@ -228,10 +261,10 @@ public:
     auto *objPosList = new std::map<const char *,b2Vec2>;
     if (theBall)
         (*objPosList)["ball"] = theBall->GetPosition();
-    if (theBrick)
-        (*objPosList)["brick"] = theBrick->GetPosition();
-    if (theBrick1)
-        (*objPosList)["brick1"] = theBrick1->GetPosition();
+    if (Paddle1)
+        (*objPosList)["paddle1"] = Paddle1->GetPosition();
+    if (Paddle2)
+        (*objPosList)["paddle2"] = Paddle2->GetPosition();
     return reinterpret_cast<void *>(objPosList);
 }
 

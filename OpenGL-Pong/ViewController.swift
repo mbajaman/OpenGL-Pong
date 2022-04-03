@@ -10,11 +10,12 @@ extension ViewController: GLKViewControllerDelegate {
     }
 }
 
-class ViewController: GLKViewController {
+class ViewController: GLKViewController, UIGestureRecognizerDelegate {
     
     
     private var context: EAGLContext?
     private var glesRenderer: Renderer!
+    private var dragStart: CGPoint!
     
     private func setupGL() {
         context = EAGLContext(api: .openGLES3)
@@ -25,6 +26,12 @@ class ViewController: GLKViewController {
             glesRenderer = Renderer()
             glesRenderer.setup(view)
             glesRenderer.loadModels()
+            
+            let movePaddle2 = UIPanGestureRecognizer(target: self, action: #selector(doMove))
+            movePaddle2.minimumNumberOfTouches = 1
+            movePaddle2.maximumNumberOfTouches = 1
+            movePaddle2.delegate = self as UIGestureRecognizerDelegate
+            self.view.addGestureRecognizer(movePaddle2)
         }
     }
     
@@ -42,6 +49,18 @@ class ViewController: GLKViewController {
     
     @objc func doSingleTap(_ sender: UITapGestureRecognizer) {
         glesRenderer.box2d.launchBall()
+    }
+    
+    @objc func doMove(recognizer:UIPanGestureRecognizer)
+    {
+        if (recognizer.state != UIGestureRecognizer.State.ended) {
+            if (recognizer.state == UIGestureRecognizer.State.began) {
+                dragStart = recognizer.location(in: self.view)
+            } else {
+                let newPt = recognizer.location(in: self.view)
+                glesRenderer.box2d.paddle2_POS_X = glesRenderer.box2d.paddle2_POS_X + Float(newPt.x - dragStart.x)*0.1;
+            }
+        }
     }
 
 }
