@@ -218,7 +218,9 @@ public:
             world->Step(MAX_TIMESTEP, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
             elapsedTime -= MAX_TIMESTEP;
             
+            if(Paddle2_POS_X < 750 && Paddle2_POS_X > 50) {
             Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
+            }
             
             if(theBall->GetPosition().y < 0){
                 Player1Score++;

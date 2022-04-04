@@ -24,8 +24,9 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
             view.context = context
             delegate = self as GLKViewControllerDelegate
             glesRenderer = Renderer()
-            glesRenderer.setup(view)
             glesRenderer.loadModels()
+            glesRenderer.setup(view)
+            //glesRenderer.loadModels()
             
             let movePaddle2 = UIPanGestureRecognizer(target: self, action: #selector(doMove))
             movePaddle2.minimumNumberOfTouches = 1
@@ -58,7 +59,10 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
                 dragStart = recognizer.location(in: self.view)
             } else {
                 let newPt = recognizer.location(in: self.view)
-                glesRenderer.box2d.paddle2_POS_X = glesRenderer.box2d.paddle2_POS_X + Float(newPt.x - dragStart.x)*0.1;
+                let touchDist = newPt.x - dragStart.x
+                if(newPt.y > 425){
+                glesRenderer.box2d.paddle2_POS_X = glesRenderer.box2d.paddle2_POS_X + Float(touchDist)*0.1;
+                }
             }
         }
     }

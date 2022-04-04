@@ -5,6 +5,7 @@
 #import "Renderer.h"
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
+#import "GLESText.h"
 #include <chrono>
 #include "GLESRenderer.hpp"
 #include <Box2D/Box2D.h>
@@ -17,6 +18,8 @@
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
+    UNIFORM_AMBIENT_COMPONENT,
+    UNIFORM_TEXTURE,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -26,6 +29,7 @@ enum
 {
     ATTRIB_POS,
     ATTRIB_COL,
+    ATTRIB_TEXTURE_COORDINATE,
     NUM_ATTRIBUTES
 };
 
@@ -44,6 +48,15 @@ enum
     
     int numBrickVerts, numBallVerts;
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
+    
+    GLKVector4 ambientComponent;
+    
+    // Text
+    GLuint _textVertexArray;
+    GLuint _textVertexBuffers[1];
+    float *vertices;
+    
+    GLESText *_glesText;
 }
 
 @end
@@ -52,14 +65,45 @@ enum
 
 @synthesize box2d;
 
-- (void)dealloc
-{
+- (void)dealloc {
+    // Delete GL buffers
+    glDeleteBuffers(3, _textVertexBuffers);
+    glDeleteVertexArrays(1, &_textVertexArray);
+    
+    // Delete vertices buffers
+    if (vertices)
+        free(vertices);
+    
     glDeleteProgram(programObject);
 }
 
-- (void)loadModels
-{
+- (void)loadModels {
+    
+    // Create VAOs
+    glGenVertexArrays(1, &_textVertexArray);
+    glBindVertexArray(_textVertexArray);
+
+    // Create VBOs
+    glGenBuffers(NUM_ATTRIBUTES, _textVertexBuffers);   // One buffer for each attribute
+    
     //[box2d HelloWorld]; // Just a simple HelloWorld test for Box2D. Can be removed.
+    int numVerts = glesRenderer.GenTextCanvas(&vertices);
+    
+    // Set up VBOs...
+    glBindBuffer(GL_ARRAY_BUFFER, _textVertexBuffers[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*5*numVerts, vertices, GL_STATIC_DRAW);
+
+    // Position
+    glEnableVertexAttribArray(ATTRIB_POS);
+    glVertexAttribPointer(ATTRIB_POS, 3, GL_FLOAT, GL_FALSE, 20, BUFFER_OFFSET(0));
+
+    // Texture coordinate
+    glEnableVertexAttribArray(ATTRIB_TEXTURE_COORDINATE);
+    glVertexAttribPointer(ATTRIB_TEXTURE_COORDINATE, 2, GL_FLOAT, GL_FALSE, 20, BUFFER_OFFSET(12));
+    
+    // Reset VAO
+    glBindVertexArray(0);
+    
 }
 
 - (void)setup:(GLKView *)view
@@ -78,12 +122,15 @@ enum
         return;
 
     // Set background colours and initialize timer
-    glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
+    glClearColor ( 0.5f, 0.2f, 0.3f, 0.0f );
     glEnable(GL_DEPTH_TEST);
     lastTime = std::chrono::steady_clock::now();
 
     // Initialize Box2D
     box2d = [[CBox2D alloc] init];
+    
+    // Initialize helper Objective-C++ class for GLES text
+    _glesText = [[GLESText alloc] init];
 }
 
 - (void)update
@@ -266,6 +313,11 @@ enum
     GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
+    
+//    float aspect = std::abs(theView.bounds.size.width / theView.bounds.size.height);
+//    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.1f, 100.0f);
+//    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -2.0f);
+//    modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
 }
 
 - (void)draw:(CGRect)drawRect;
@@ -304,6 +356,30 @@ enum
     glBindVertexArray(ballVertexArray);
     if (theBall && numBallVerts > 0)
         glDrawArrays(GL_TRIANGLE_FAN, 0, numBallVerts);
+    
+    glBindVertexArray(_textVertexArray);
+    
+    // Use our helper class to draw text to an internal bitmap
+    _glesText.posx = 0.0f;
+    [_glesText DrawText:(char *)"Hello World!" fontName:@"arial"];
+    
+    // Now transfer the internal bitmap to a GL texture
+    GLuint texName;
+    glGenTextures(1, &texName);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    unsigned char *img = [_glesText GetImage];  // get the internal bitmap
+    int w = [_glesText GetWidth];
+    int h = [_glesText GetHeight];
+    // Send the values from the internal bitmap to the GL texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)img);
+    // Now select that as the active texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    glUniform1i(uniforms[UNIFORM_TEXTURE], 0);
+
+    // Draw the cube (square), with the new texture mapped onto it
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 
@@ -312,12 +388,23 @@ enum
     // Load shaders
     char *vShaderStr = glesRenderer.LoadShaderFile([[[NSBundle mainBundle] pathForResource:[[NSString stringWithUTF8String:"Shader.vsh"] stringByDeletingPathExtension] ofType:[[NSString stringWithUTF8String:"Shader.vsh"] pathExtension]] cStringUsingEncoding:1]);
     char *fShaderStr = glesRenderer.LoadShaderFile([[[NSBundle mainBundle] pathForResource:[[NSString stringWithUTF8String:"Shader.fsh"] stringByDeletingPathExtension] ofType:[[NSString stringWithUTF8String:"Shader.fsh"] pathExtension]] cStringUsingEncoding:1]);
+    
+    // Bind attribute locations.
+    // This needs to be done prior to linking.
+    glBindAttribLocation(programObject, ATTRIB_POS, "position");
+    glBindAttribLocation(programObject, ATTRIB_TEXTURE_COORDINATE, "texCoordIn");
+    
     programObject = glesRenderer.LoadProgram(vShaderStr, fShaderStr);
     if (programObject == 0)
         return false;
     
     // Set up uniform variables
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(programObject, "modelViewProjectionMatrix");
+    uniforms[UNIFORM_TEXTURE] = glGetUniformLocation(programObject, "texSampler");
+    uniforms[UNIFORM_AMBIENT_COMPONENT] = glGetUniformLocation(programObject, "ambientComponent");
+    
+    // Set up lighting parameters
+    ambientComponent = GLKVector4Make(0.8f, 0.1f, 0.1f, 1.0f);
 
     return true;
 }

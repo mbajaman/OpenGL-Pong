@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D87D5CBE27FA479E000A3250 /* GLESFTText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D87D5CB627FA479E000A3250 /* GLESFTText.cpp */; };
+		D87D5CBF27FA479E000A3250 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D87D5CB727FA479E000A3250 /* libFreetype2.a */; };
+		D87D5CC027FA479E000A3250 /* times.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D87D5CB827FA479E000A3250 /* times.ttf */; };
+		D87D5CC227FA479F000A3250 /* arial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D87D5CBC27FA479E000A3250 /* arial.ttf */; };
+		D87D5CC327FA479F000A3250 /* GLESText.mm in Sources */ = {isa = PBXBuildFile; fileRef = D87D5CBD27FA479E000A3250 /* GLESText.mm */; };
 		D8E828E427F8402D00D467AC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E8286D27F8402D00D467AC /* ViewController.swift */; };
 		D8E828E527F8402D00D467AC /* CBox2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = D8E8286E27F8402D00D467AC /* CBox2D.mm */; };
 		D8E828E627F8402D00D467AC /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = D8E8286F27F8402D00D467AC /* Shader.fsh */; };
@@ -68,6 +73,14 @@
 
 /* Begin PBXFileReference section */
 		18FC6AD025E4D146001A2372 /* OpenGL-Pong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OpenGL-Pong.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D87D5CB627FA479E000A3250 /* GLESFTText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLESFTText.cpp; sourceTree = "<group>"; };
+		D87D5CB727FA479E000A3250 /* libFreetype2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreetype2.a; sourceTree = "<group>"; };
+		D87D5CB827FA479E000A3250 /* times.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = times.ttf; sourceTree = "<group>"; };
+		D87D5CB927FA479E000A3250 /* libFreetype2-iosdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libFreetype2-iosdevice.a"; sourceTree = "<group>"; };
+		D87D5CBA27FA479E000A3250 /* GLESText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLESText.h; sourceTree = "<group>"; };
+		D87D5CBB27FA479E000A3250 /* GLESFTText.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GLESFTText.hpp; sourceTree = "<group>"; };
+		D87D5CBC27FA479E000A3250 /* arial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = arial.ttf; sourceTree = "<group>"; };
+		D87D5CBD27FA479E000A3250 /* GLESText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLESText.mm; sourceTree = "<group>"; };
 		D8E8286D27F8402D00D467AC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D8E8286E27F8402D00D467AC /* CBox2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CBox2D.mm; sourceTree = "<group>"; };
 		D8E8286F27F8402D00D467AC /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
@@ -184,6 +197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87D5CBF27FA479E000A3250 /* libFreetype2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,9 +220,25 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D87D5CB527FA479E000A3250 /* Font support */ = {
+			isa = PBXGroup;
+			children = (
+				D87D5CB627FA479E000A3250 /* GLESFTText.cpp */,
+				D87D5CB727FA479E000A3250 /* libFreetype2.a */,
+				D87D5CB827FA479E000A3250 /* times.ttf */,
+				D87D5CB927FA479E000A3250 /* libFreetype2-iosdevice.a */,
+				D87D5CBA27FA479E000A3250 /* GLESText.h */,
+				D87D5CBB27FA479E000A3250 /* GLESFTText.hpp */,
+				D87D5CBC27FA479E000A3250 /* arial.ttf */,
+				D87D5CBD27FA479E000A3250 /* GLESText.mm */,
+			);
+			path = "Font support";
+			sourceTree = "<group>";
+		};
 		D8E8286C27F8402D00D467AC /* OpenGL-Pong */ = {
 			isa = PBXGroup;
 			children = (
+				D87D5CB527FA479E000A3250 /* Font support */,
 				D8E8287C27F8402D00D467AC /* Box2D */,
 				D8E8287927F8402D00D467AC /* CBox2D.h */,
 				D8E8286E27F8402D00D467AC /* CBox2D.mm */,
@@ -449,6 +479,8 @@
 				D8E828E627F8402D00D467AC /* Shader.fsh in Resources */,
 				D8E828E927F8402D00D467AC /* Main.storyboard in Resources */,
 				D8E828EB27F8402D00D467AC /* Shader.vsh in Resources */,
+				D87D5CC027FA479E000A3250 /* times.ttf in Resources */,
+				D87D5CC227FA479F000A3250 /* arial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +510,7 @@
 				D8E8290127F8402D00D467AC /* b2GearJoint.cpp in Sources */,
 				D8E8290A27F8402D00D467AC /* b2BlockAllocator.cpp in Sources */,
 				D8E8291327F8402D00D467AC /* b2ChainShape.cpp in Sources */,
+				D87D5CC327FA479F000A3250 /* GLESText.mm in Sources */,
 				D8E828EF27F8402D00D467AC /* b2Fixture.cpp in Sources */,
 				D8E828F927F8402D00D467AC /* b2WorldCallbacks.cpp in Sources */,
 				D8E8291527F8402D00D467AC /* b2CircleShape.cpp in Sources */,
@@ -493,6 +526,7 @@
 				D8E8291827F8402D00D467AC /* b2BroadPhase.cpp in Sources */,
 				D8E828F627F8402D00D467AC /* b2CircleContact.cpp in Sources */,
 				D8E8290527F8402D00D467AC /* b2RopeJoint.cpp in Sources */,
+				D87D5CBE27FA479E000A3250 /* GLESFTText.cpp in Sources */,
 				D8E8291B27F8402D00D467AC /* Renderer.mm in Sources */,
 				D8E8291427F8402D00D467AC /* b2EdgeShape.cpp in Sources */,
 				D8E8291127F8402D00D467AC /* b2CollidePolygon.cpp in Sources */,
@@ -677,12 +711,21 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OpenGL-Pong/Font\\ support",
+					"$(PROJECT_DIR)/OpenGL-Pong/Font\\ support",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.btechgames.OpenGL-Pong";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "OpenGL-Pong/Box2DSwift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/$(PROJECT_NAME)",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/include/**",
+				);
 			};
 			name = Debug;
 		};
@@ -704,11 +747,20 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OpenGL-Pong/Font\\ support",
+					"$(PROJECT_DIR)/OpenGL-Pong/Font\\ support",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.btechgames.OpenGL-Pong";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "OpenGL-Pong/Box2DSwift-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/$(PROJECT_NAME)",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/include/**",
+				);
 			};
 			name = Release;
 		};
