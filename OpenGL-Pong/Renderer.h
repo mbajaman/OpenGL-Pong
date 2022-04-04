@@ -15,6 +15,7 @@
 - (void)loadModels;
 - (void)update;
 - (void)draw:(CGRect)drawRect;
+- (char *) appendCharToCharArray: (char *) array addingChar: (char) a;
 
 @end
 

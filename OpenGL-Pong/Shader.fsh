@@ -12,13 +12,16 @@ out vec4 o_fragColor;
 
 uniform sampler2D texSampler;
 uniform vec4 ambientComponent;
+uniform bool fragText;
 
 void main()
 {
-    vec4 ambient = ambientComponent;
-    
-    o_fragColor = ambient * texture(texSampler, texCoordOut);
-    o_fragColor.a = 1.0;
-    o_fragColor = vec4(1,1,1,1);
+    if(fragText){
+        vec4 ambient = ambientComponent;
+        o_fragColor = ambient * texture(texSampler, texCoordOut);
+        o_fragColor.a = 1.0;
+    } else {
+        o_fragColor = vec4(1,1,1,1);
+    }
 }
 

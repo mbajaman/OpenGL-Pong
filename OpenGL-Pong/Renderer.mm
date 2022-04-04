@@ -20,6 +20,7 @@ enum
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
     UNIFORM_AMBIENT_COMPONENT,
     UNIFORM_TEXTURE,
+    UNIFORM_FRAG_TEXT,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -131,6 +132,7 @@ enum
     
     // Initialize helper Objective-C++ class for GLES text
     _glesText = [[GLESText alloc] init];
+    
 }
 
 - (void)update
@@ -329,6 +331,7 @@ enum
 
     // Pass along updated MVP matrix
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, modelViewProjectionMatrix.m);
+    glUniform4fv(uniforms[UNIFORM_AMBIENT_COMPONENT], 1, ambientComponent.v);
     
     // Retrieve brick and ball positions from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
@@ -344,6 +347,8 @@ enum
     printf("\n");
 #endif
 
+    glUniform1i(uniforms[UNIFORM_FRAG_TEXT], 0);
+    
     // Bind each vertex array and call glDrawArrays for each of the ball and brick
     glBindVertexArray(paddle1VertexArray);
     if (Paddle1 && numBrickVerts > 0)
@@ -357,11 +362,22 @@ enum
     if (theBall && numBallVerts > 0)
         glDrawArrays(GL_TRIANGLE_FAN, 0, numBallVerts);
     
+    //Uncomment line below to render game objects in white!
+    glUniform1i(uniforms[UNIFORM_FRAG_TEXT], 1);
     glBindVertexArray(_textVertexArray);
     
     // Use our helper class to draw text to an internal bitmap
     _glesText.posx = 0.0f;
-    [_glesText DrawText:(char *)"Hello World!" fontName:@"arial"];
+    char *playerText = "PLAYER 1: 0 - PLAYER 2: 0";
+    char Player1ScoreChar = box2d.GetPlayer1Score + '0';
+    char Player2ScoreChar = box2d.GetPlayer2Score + '0';
+    size_t len = strlen(playerText);
+    char *Player1Score = new char[len*2+1];
+    strcpy(Player1Score, playerText);
+    Player1Score[10] = Player1ScoreChar;
+    Player1Score[24] = Player2ScoreChar;
+    
+    [_glesText DrawText:(Player1Score) fontName:@"arial"];
     
     // Now transfer the internal bitmap to a GL texture
     GLuint texName;
@@ -380,6 +396,19 @@ enum
 
     // Draw the cube (square), with the new texture mapped onto it
     glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+- (char *) appendCharToCharArray: (char *) array addingChar: (char) a
+{
+    size_t len = strlen(array);
+
+    char* ret = new char[len+2];
+
+    strcpy(ret, array);
+    ret[len] = a;
+    ret[len+1] = '\0';
+
+    return ret;
 }
 
 
@@ -402,9 +431,10 @@ enum
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(programObject, "modelViewProjectionMatrix");
     uniforms[UNIFORM_TEXTURE] = glGetUniformLocation(programObject, "texSampler");
     uniforms[UNIFORM_AMBIENT_COMPONENT] = glGetUniformLocation(programObject, "ambientComponent");
+    uniforms[UNIFORM_FRAG_TEXT] = glGetUniformLocation(programObject, "fragText");
     
     // Set up lighting parameters
-    ambientComponent = GLKVector4Make(0.8f, 0.1f, 0.1f, 1.0f);
+    ambientComponent = GLKVector4Make(0.0f, 1.0f, 1.0f, 1.0f);
 
     return true;
 }
