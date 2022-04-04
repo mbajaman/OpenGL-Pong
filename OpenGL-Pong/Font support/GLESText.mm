@@ -21,7 +21,7 @@ struct CPPClass
     if (self) {
         theObj = new CPPClass;
     }
-    _fontPtSize = 24;
+    _fontPtSize = 32;
     _dpi = 100;
     _posx = 0.2f;
     _posy = 0.2f;

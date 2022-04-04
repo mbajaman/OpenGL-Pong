@@ -7,8 +7,8 @@
 
 #include "GLESFTText.hpp"
 
-#define WIDTH   256
-#define HEIGHT  256
+#define WIDTH   555
+#define HEIGHT  64
 
 GLESFTText::GLESFTText()
 {

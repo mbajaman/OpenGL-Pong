@@ -36,6 +36,8 @@
 -(void) Update:(float)elapsedTime;  // update the Box2D engine
 -(void) RegisterHit;                // Register when the ball hits the brick
 -(void *)GetObjectPositions;        // Get the positions of the ball and brick
+-(int) GetPlayer1Score;
+-(int) GetPlayer2Score;
 
 @end
 

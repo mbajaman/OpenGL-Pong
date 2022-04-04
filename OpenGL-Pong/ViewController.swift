@@ -24,9 +24,8 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
             view.context = context
             delegate = self as GLKViewControllerDelegate
             glesRenderer = Renderer()
-            glesRenderer.loadModels()
             glesRenderer.setup(view)
-            //glesRenderer.loadModels()
+            glesRenderer.loadModels()
             
             let movePaddle2 = UIPanGestureRecognizer(target: self, action: #selector(doMove))
             movePaddle2.minimumNumberOfTouches = 1

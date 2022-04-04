@@ -219,7 +219,9 @@ public:
             elapsedTime -= MAX_TIMESTEP;
             
             if(Paddle2_POS_X < 750 && Paddle2_POS_X > 50) {
-            Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
+                Paddle1->SetTransform(b2Vec2(Paddle1_POS_X, Paddle1_POS_Y), 0);
+                Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
+                
             }
             
             if(theBall->GetPosition().y < 0){
@@ -270,7 +272,14 @@ public:
     return reinterpret_cast<void *>(objPosList);
 }
 
+-(int) GetPlayer1Score {
+    //char player1ScoreChar = Player1Score + '0';
+    return Player1Score;
+}
 
+-(int) GetPlayer2Score {
+    return Player2Score;
+}
 
 -(void)HelloWorld //This is a test where you setup the world and generate numbers. A dynamic box is falling down here.
 {
