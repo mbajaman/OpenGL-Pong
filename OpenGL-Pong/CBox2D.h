@@ -38,6 +38,7 @@
 
 @interface CBox2D : NSObject
 
+@property float Paddle1_POS_X;
 @property float Paddle2_POS_X;
 
 -(void) HelloWorld; // Basic Hello World! example from Box2D

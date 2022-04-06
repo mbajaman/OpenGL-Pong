@@ -28,8 +28,7 @@ public:
         contact->GetWorldManifold(&worldManifold);
         b2PointState state1[2], state2[2];
         b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
-        if (state2[0] == b2_addState)
-        {
+        if (state2[0] == b2_addState) {
             // Use contact->GetFixtureA()->GetBody() to get the body
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
             CBox2D* parentObj = (__bridge CBox2D *)(bodyA->GetUserData());
@@ -69,6 +68,7 @@ public:
 
 @implementation CBox2D
 
+@synthesize Paddle1_POS_X;
 @synthesize Paddle2_POS_X;
 
 - (instancetype)init //This is replacement for Hello World
@@ -274,9 +274,10 @@ public:
             elapsedTime -= MAX_TIMESTEP;
             
             if(Paddle2_POS_X < 675 && Paddle2_POS_X > 125) {
-                Paddle1->SetTransform(b2Vec2(Paddle1_POS_X, Paddle1_POS_Y), 0);
                 Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
-                
+            }
+            if(Paddle1_POS_X < 675 && Paddle1_POS_X > 125) {
+                Paddle1->SetTransform(b2Vec2(Paddle1_POS_X, Paddle1_POS_Y), 0);
             }
             
             if(theBall->GetPosition().y < 0){
