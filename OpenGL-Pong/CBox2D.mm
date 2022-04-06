@@ -304,20 +304,17 @@ public:
     }
 }
 
--(void)RegisterHit
-{
+-(void)RegisterHit {
     // Set some flag here for processing later...
     ballHitBrick = true;
 }
 
--(void)LaunchBall
-{
+-(void)LaunchBall {
     // Set some flag here for processing later...
     ballLaunched = true;
 }
 
--(void *)GetObjectPositions
-{
+-(void *)GetObjectPositions {
     auto *objPosList = new std::map<const char *,b2Vec2>;
     if (theBall)
         (*objPosList)["ball"] = theBall->GetPosition();

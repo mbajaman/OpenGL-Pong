@@ -124,7 +124,7 @@ enum
         return;
 
     // Set background colours and initialize timer
-    glClearColor ( 0.5f, 0.2f, 0.3f, 0.0f );
+    glClearColor ( 0.11f, 0.11f, 0.69f, 0.0f );
     glEnable(GL_DEPTH_TEST);
     lastTime = std::chrono::steady_clock::now();
 
