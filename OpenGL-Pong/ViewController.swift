@@ -63,20 +63,36 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
 //                if(newPt.y > 425){
 //                    glesRenderer.box2d.paddle2_POS_X = glesRenderer.box2d.paddle2_POS_X + Float(touchDist.x / 100)*0.1;
 //                }
-                print(glesRenderer.box2d.paddle2_POS_X)
+                //print(glesRenderer.box2d.paddle2_POS_X)
                 
                 if (newPt.y > 425) {
-                    print (touchDist);
+                    //print (touchDist);
                     
-                    if (glesRenderer.box2d.paddle2_POS_X < 700 && glesRenderer.box2d.paddle2_POS_X > 100) {
+                    if (glesRenderer.box2d.paddle2_POS_X < 675 && glesRenderer.box2d.paddle2_POS_X > 125) {
                         glesRenderer.box2d.paddle2_POS_X =  glesRenderer.box2d.paddle2_POS_X + Float(touchDist.x / 3);
                     }
-                    if (glesRenderer.box2d.paddle2_POS_X > 700) {
+                    if (glesRenderer.box2d.paddle2_POS_X > 675) {
                         glesRenderer.box2d.paddle2_POS_X =  glesRenderer.box2d.paddle2_POS_X - abs(Float(touchDist.x / 3));
                     }
-                    if (glesRenderer.box2d.paddle2_POS_X < 100) {
+                    if (glesRenderer.box2d.paddle2_POS_X < 125) {
                         glesRenderer.box2d.paddle2_POS_X =
                         glesRenderer.box2d.paddle2_POS_X +
+                        abs(Float(touchDist.x / 3))
+                    }
+                    
+                }
+                if (newPt.y < 425) {
+                    //print (touchDist);
+                    
+                    if (glesRenderer.box2d.paddle1_POS_X < 675 && glesRenderer.box2d.paddle1_POS_X > 125) {
+                        glesRenderer.box2d.paddle1_POS_X =  glesRenderer.box2d.paddle1_POS_X + Float(touchDist.x / 3);
+                    }
+                    if (glesRenderer.box2d.paddle1_POS_X > 675) {
+                        glesRenderer.box2d.paddle1_POS_X =  glesRenderer.box2d.paddle1_POS_X - abs(Float(touchDist.x / 3));
+                    }
+                    if (glesRenderer.box2d.paddle1_POS_X < 125) {
+                        glesRenderer.box2d.paddle1_POS_X =
+                        glesRenderer.box2d.paddle1_POS_X +
                         abs(Float(touchDist.x / 3))
                     }
                     
