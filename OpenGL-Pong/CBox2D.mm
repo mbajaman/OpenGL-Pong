@@ -273,7 +273,7 @@ public:
             world->Step(MAX_TIMESTEP, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
             elapsedTime -= MAX_TIMESTEP;
             
-            if(Paddle2_POS_X < 750 && Paddle2_POS_X > 50) {
+            if(Paddle2_POS_X < 675 && Paddle2_POS_X > 125) {
                 Paddle1->SetTransform(b2Vec2(Paddle1_POS_X, Paddle1_POS_Y), 0);
                 Paddle2->SetTransform(b2Vec2(Paddle2_POS_X, Paddle2_POS_Y), 0);
                 
