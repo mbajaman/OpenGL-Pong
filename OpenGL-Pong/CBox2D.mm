@@ -227,14 +227,17 @@ public:
     // Apply random impulse when ball hits paddle or walls
     if(ballHitPaddle){
         float r = arc4random_uniform(BALL_VELOCITY);
-        theBall->ApplyLinearImpulse(b2Vec2(r, BALL_VELOCITY), theBall->GetPosition(), true);
+        if(theBall->GetPosition().y < 300){
+            theBall->ApplyLinearImpulse(b2Vec2(r, BALL_VELOCITY), theBall->GetPosition(), true);
+        } else {
+            theBall->ApplyLinearImpulse(b2Vec2(r, -100000.0f), theBall->GetPosition(), true);
+        }
+        
         ballHitPaddle = false;
     }
 
-    if (world)
-    {
-        while (elapsedTime >= MAX_TIMESTEP)
-        {
+    if (world) {
+        while (elapsedTime >= MAX_TIMESTEP) {
             world->Step(MAX_TIMESTEP, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
             elapsedTime -= MAX_TIMESTEP;
             
@@ -245,6 +248,9 @@ public:
             if(Paddle1_POS_X < 675 && Paddle1_POS_X > 125) {
                 Paddle1->SetTransform(b2Vec2(Paddle1_POS_X, Paddle1_POS_Y), 0);
             }
+            
+            EWall->SetTransform(b2Vec2(EWALL_POS_X, EWALL_POS_Y), 0);
+            WWall->SetTransform(b2Vec2(WWALL_POS_X, WWALL_POS_Y), 0);
             
             // Reset the ball when Players score and increase the score
             if(theBall->GetPosition().y < 0){
@@ -264,8 +270,7 @@ public:
             }
         }
         
-        if (elapsedTime > 0.0f)
-        {
+        if (elapsedTime > 0.0f) {
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
