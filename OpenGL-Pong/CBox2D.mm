@@ -52,6 +52,7 @@ public:
     b2Body *groundBody;
     b2PolygonShape *groundBox;
     b2Body *Paddle1, *Paddle2, *theBall;
+    b2Body *EWall, *WWall;
     CContactListener *contactListener;
     float totalElapsedTime;
     
@@ -108,6 +109,18 @@ public:
         Paddle2BodyDef.position.Set(Paddle2_POS_X, Paddle2_POS_Y);
         Paddle2 = world->CreateBody(&Paddle2BodyDef);
         
+        // Set up the east wall
+        b2BodyDef EWallBodyDef;
+        EWallBodyDef.type = b2_dynamicBody;
+        EWallBodyDef.position.Set(EWALL_POS_X, EWALL_POS_Y);
+        EWall = world->CreateBody(&EWallBodyDef);
+        
+        // Set up the west wall
+        b2BodyDef WWallBodyDef;
+        WWallBodyDef.type = b2_dynamicBody;
+        WWallBodyDef.position.Set(WWALL_POS_X, WWALL_POS_Y);
+        WWall = world->CreateBody(&WWallBodyDef);
+        
         if(Paddle1){
             Paddle1->SetUserData((__bridge void *)self);
             Paddle1->SetAwake(false);
@@ -115,9 +128,23 @@ public:
             Paddle2->SetUserData((__bridge void *)self);
             Paddle2->SetAwake(false);
             
+            EWall->SetUserData((__bridge void *)self);
+            EWall->SetAwake(false);
+            
+            WWall->SetUserData((__bridge void *)self);
+            WWall->SetAwake(false);
+            
             //Shape
             b2PolygonShape dynamicBox;
             dynamicBox.SetAsBox(BRICK_WIDTH/2, BRICK_HEIGHT/2);
+            
+            //East Wall Shape
+            b2PolygonShape eWallDynamicBox;
+            eWallDynamicBox.SetAsBox(EWALL_WIDTH/2, EWALL_HEIGHT/2);
+            
+            //East Wall Shape
+            b2PolygonShape wWallDynamicBox;
+            wWallDynamicBox.SetAsBox(WWALL_WIDTH/2, WWALL_HEIGHT/2);
             
             //Fixtures
             b2FixtureDef fixtureDef;
@@ -133,6 +160,20 @@ public:
             fixtureDef1.friction = 0.0f;
             fixtureDef1.restitution = 1.0f;
             Paddle2->CreateFixture(&fixtureDef1);
+            
+            b2FixtureDef EWallfixture;
+            EWallfixture.shape = &eWallDynamicBox;
+            EWallfixture.density = 100.0f;
+            EWallfixture.friction = 0.0f;
+            EWallfixture.restitution = 1.0f;
+            EWall->CreateFixture(&EWallfixture);
+            
+            b2FixtureDef WWallfixture;
+            WWallfixture.shape = &wWallDynamicBox;
+            WWallfixture.density = 100.0f;
+            WWallfixture.friction = 0.0f;
+            WWallfixture.restitution = 1.0f;
+            WWall->CreateFixture(&WWallfixture);
             
             b2BodyDef ballBodyDef; //ball Defintion
             ballBodyDef.type = b2_dynamicBody;
@@ -178,10 +219,22 @@ public:
 -(void)Update:(float)elapsedTime
 {
     theBall->SetActive(true); //makes it part of the simulation otherwise its just sitting there
+    EWall->SetActive(true);
+    WWall->SetActive(true);
+    
     // Check here if we need to launch the ball
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if(ballLaunched) {
-        theBall->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), theBall->GetPosition(), true);
+        float r = arc4random_uniform(BALL_VELOCITY);
+        float d = arc4random_uniform(2);
+        printf("\nDirection: %f\n", d);
+        printf("Impulse: %f", r);
+        if(d){
+            theBall->ApplyLinearImpulse(b2Vec2(r, BALL_VELOCITY), theBall->GetPosition(), true);
+        } else {
+            theBall->ApplyLinearImpulse(b2Vec2(-r, -100000.0f), theBall->GetPosition(), true);
+        }
+        
         theBall->SetActive(true);
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
@@ -205,7 +258,9 @@ public:
         //theBall->SetLinearVelocity(b2Vec2(0, 0));
         //theBall->SetAngularVelocity(0);
         //theBall->SetActive(false);
-        
+        printf("BALL HIT BRICK");
+        float r = arc4random_uniform(BALL_VELOCITY);
+        theBall->ApplyLinearImpulse(b2Vec2(r, BALL_VELOCITY), theBall->GetPosition(), true);
         //world->DestroyBody(theBrick);
         //theBrick = NULL;
         ballHitBrick = false;
@@ -269,6 +324,10 @@ public:
         (*objPosList)["paddle1"] = Paddle1->GetPosition();
     if (Paddle2)
         (*objPosList)["paddle2"] = Paddle2->GetPosition();
+    if (EWall)
+        (*objPosList)["ewall"] = EWall->GetPosition();
+    if (WWall)
+        (*objPosList)["wwall"] = WWall->GetPosition();
     return reinterpret_cast<void *>(objPosList);
 }
 
