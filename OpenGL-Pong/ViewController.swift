@@ -12,7 +12,6 @@ extension ViewController: GLKViewControllerDelegate {
 
 class ViewController: GLKViewController, UIGestureRecognizerDelegate {
     
-    
     private var context: EAGLContext?
     private var glesRenderer: Renderer!
     private var dragStart: CGPoint!
@@ -27,11 +26,11 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
             glesRenderer.setup(view)
             glesRenderer.loadModels()
             
-            let movePaddle2 = UIPanGestureRecognizer(target: self, action: #selector(doMove))
-            movePaddle2.minimumNumberOfTouches = 1
-            movePaddle2.maximumNumberOfTouches = 1
-            movePaddle2.delegate = self as UIGestureRecognizerDelegate
-            self.view.addGestureRecognizer(movePaddle2)
+            let movePaddles = UIPanGestureRecognizer(target: self, action: #selector(movePaddles))
+            movePaddles.minimumNumberOfTouches = 1
+            movePaddles.maximumNumberOfTouches = 1
+            movePaddles.delegate = self as UIGestureRecognizerDelegate
+            self.view.addGestureRecognizer(movePaddles)
         }
     }
     
@@ -51,7 +50,7 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
         glesRenderer.box2d.launchBall()
     }
     
-    @objc func doMove(recognizer:UIPanGestureRecognizer)
+    @objc func movePaddles(recognizer:UIPanGestureRecognizer)
     {
         if (recognizer.state != UIGestureRecognizer.State.ended) {
             if (recognizer.state == UIGestureRecognizer.State.began) {
@@ -59,41 +58,38 @@ class ViewController: GLKViewController, UIGestureRecognizerDelegate {
             } else {
                 let newPt = recognizer.location(in: self.view)
                 let touchDist = recognizer.translation(in: view)
-                // let touchDist = newPt.x - dragStart.x
-//                if(newPt.y > 425){
-//                    glesRenderer.box2d.paddle2_POS_X = glesRenderer.box2d.paddle2_POS_X + Float(touchDist.x / 100)*0.1;
-//                }
-                //print(glesRenderer.box2d.paddle2_POS_X)
                 
                 if (newPt.y > 425) {
                     //print (touchDist);
-                    
-                    if (glesRenderer.box2d.paddle2_POS_X < 675 && glesRenderer.box2d.paddle2_POS_X > 125) {
-                        glesRenderer.box2d.paddle2_POS_X =  glesRenderer.box2d.paddle2_POS_X + Float(touchDist.x / 3);
+                    if (glesRenderer.box2d.paddle2_POS_X < 675
+                        && glesRenderer.box2d.paddle2_POS_X > 125) {
+                        glesRenderer.box2d.paddle2_POS_X =
+                        glesRenderer.box2d.paddle2_POS_X + Float(touchDist.x / 3);
                     }
                     if (glesRenderer.box2d.paddle2_POS_X > 675) {
-                        glesRenderer.box2d.paddle2_POS_X =  glesRenderer.box2d.paddle2_POS_X - abs(Float(touchDist.x / 3));
+                        glesRenderer.box2d.paddle2_POS_X =
+                        glesRenderer.box2d.paddle2_POS_X - abs(Float(touchDist.x / 3));
                     }
                     if (glesRenderer.box2d.paddle2_POS_X < 125) {
                         glesRenderer.box2d.paddle2_POS_X =
-                        glesRenderer.box2d.paddle2_POS_X +
-                        abs(Float(touchDist.x / 3))
+                        glesRenderer.box2d.paddle2_POS_X + abs(Float(touchDist.x / 3))
                     }
                     
                 }
                 if (newPt.y < 425) {
                     //print (touchDist);
-                    
-                    if (glesRenderer.box2d.paddle1_POS_X < 675 && glesRenderer.box2d.paddle1_POS_X > 125) {
-                        glesRenderer.box2d.paddle1_POS_X =  glesRenderer.box2d.paddle1_POS_X + Float(touchDist.x / 3);
+                    if (glesRenderer.box2d.paddle1_POS_X < 675
+                        && glesRenderer.box2d.paddle1_POS_X > 125) {
+                        glesRenderer.box2d.paddle1_POS_X =
+                        glesRenderer.box2d.paddle1_POS_X + Float(touchDist.x / 3);
                     }
                     if (glesRenderer.box2d.paddle1_POS_X > 675) {
-                        glesRenderer.box2d.paddle1_POS_X =  glesRenderer.box2d.paddle1_POS_X - abs(Float(touchDist.x / 3));
+                        glesRenderer.box2d.paddle1_POS_X =
+                        glesRenderer.box2d.paddle1_POS_X - abs(Float(touchDist.x / 3));
                     }
                     if (glesRenderer.box2d.paddle1_POS_X < 125) {
                         glesRenderer.box2d.paddle1_POS_X =
-                        glesRenderer.box2d.paddle1_POS_X +
-                        abs(Float(touchDist.x / 3))
+                        glesRenderer.box2d.paddle1_POS_X + abs(Float(touchDist.x / 3))
                     }
                     
                 }

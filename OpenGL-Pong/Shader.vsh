@@ -18,7 +18,7 @@ void main()
     // Simple passthrough shader
     v_color = color;
     
-    // Pass through texture coordinate
+    // Passthrough texture coordinate
     texCoordOut = texCoordIn;
     
     gl_Position = modelViewProjectionMatrix * position;

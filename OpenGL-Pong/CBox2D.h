@@ -41,14 +41,12 @@
 @property float Paddle1_POS_X;
 @property float Paddle2_POS_X;
 
--(void) HelloWorld; // Basic Hello World! example from Box2D
-
--(void) LaunchBall;                 // launch the ball
--(void) Update:(float)elapsedTime;  // update the Box2D engine
+-(void) LaunchBall;                 // Launch the ball
+-(void) Update:(float)elapsedTime;  // Update the Box2D engine
 -(void) RegisterHit;                // Register when the ball hits the brick
--(void *)GetObjectPositions;        // Get the positions of the ball and brick
--(int) GetPlayer1Score;
--(int) GetPlayer2Score;
+-(void *) GetObjectPositions;       // Get the positions of the ball and brick
+-(int) GetPlayer1Score;             // Return Player 1 Score - Used to render as GLES Text
+-(int) GetPlayer2Score;             // Return Player 2 Score - Used to render as GLES Text
 
 @end
 
